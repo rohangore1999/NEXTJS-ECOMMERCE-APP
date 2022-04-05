@@ -57,12 +57,14 @@ function MyApp({ Component, pageProps }) {
       if (localStorage.getItem('cart')) {
         // if the localStorage have cart then; set the orginal cart by Parse the json(converting string to json object)
         setCart(JSON.parse(localStorage.getItem('cart')))
+        saveCart(JSON.parse(localStorage.getItem('cart')))
       }
     } catch (error) {
       // if error then clear; so that we should not face that error again
       console.error(error)
       localStorage.clear()
     }
+
   }, [])
 
 

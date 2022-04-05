@@ -9,7 +9,7 @@ export default function Home() {
       <Head>
         <title>CodesWear.com - Wear the Code</title>
         <meta name="description" content="CodesWear - Wear the Code" />
-        <link rel="icon" href="/favicon.ico" />
+        <ink rel="icon" href="/favicon.ico" />
       </Head>
 
 
