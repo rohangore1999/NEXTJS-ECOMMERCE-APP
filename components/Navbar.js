@@ -13,6 +13,11 @@ function Navbar({ cart, addCart, removeCart, clearCart, subTotal }) {
     const ref = useRef(null)
 
     const toggleCart = () => {
+        if (Object.keys(cart).length !== 0) {
+            ref.current.classList.remove("translate-x-full")
+            ref.current.classList.add("translate-x-0")
+        }
+
         // to toggle the sidebar for the cart
         if (ref.current.classList.contains("translate-x-full")) {
             ref.current.classList.remove("translate-x-full")
@@ -67,7 +72,7 @@ function Navbar({ cart, addCart, removeCart, clearCart, subTotal }) {
                     {
                         Object.keys(cart).map((item, idx) => (
                             <li key={idx} className='space-x-10 flex items-center justify-center'>
-                                <span>{cart[item].name}</span> {/* cart >>>  console.log(cart['wear-the-code'].name) */}
+                                <span>{cart[item].name} ({cart[item].size}/{cart[item].variant})</span> {/* cart >>>  console.log(cart['wear-the-code'].name) */}
 
                                 <div className='flex space-x-2 items-center justify-center'>
                                     <span className=' flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-full p-2 hover:scale-125 transition transform ease-out' onClick={() => removeCart(item, 1, cart[item].price, cart[item].name, cart[item].size, cart[item].variant)}><AiOutlineMinus className='text-xs' /></span>
@@ -84,8 +89,9 @@ function Navbar({ cart, addCart, removeCart, clearCart, subTotal }) {
                 {
                     Object.keys(cart).length >= 1 ? (
                         <div className='flex'>
-                            <Link href={'/checkout'}>
-                                <button className="flex mx-auto mt-7 text-black border-2 border-black bg-transparent py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base"><AiOutlineShoppingCart className='mt-1 mr-2 text-xl' />Check Out</button>
+                            <Link href={'/checkout'}><a>
+                                <button className="flex mx-auto mt-7 text-black border-2 border-black bg-transparent 
+                                py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base"><AiOutlineShoppingCart className='mt-1 mr-2 text-xl' />Check Out</button></a>
                             </Link>
 
                             <button onClick={clearCart} className="flex mx-auto mt-7 text-black border-2 border-black bg-transparent py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base">Clear</button>

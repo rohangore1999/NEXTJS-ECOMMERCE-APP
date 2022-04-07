@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 import '../styles/globals.css'
+import { useRouter } from 'next/router'
 
 function MyApp({ Component, pageProps }) {
 
   const [cart, setCart] = useState({}) //empty obj, it will contain the products in the cart data
   const [subTotal, setSubTotal] = useState(0)
+
+  const router = useRouter()
 
   // to save in localstorage
   const saveCart = (mycart) => {
@@ -87,10 +90,23 @@ function MyApp({ Component, pageProps }) {
     saveCart(newCart) //saving/persisting the cart in local storage
   }
 
+
+  // direct buy the product
+  // when user click on buy now all the items which were in the cart will remove and the only item which user have bought will show in cart, redirect to /checkout 
+  const buyNow = (itemCode, qty, price, name, size, variant) => {
+    saveCart({}) //empty the local storage
+
+    let newCart = { itemCode: { qty: 1, price, name, size, variant } } // making copy of the cart
+
+    setCart(newCart) //updating the original cart
+    saveCart(newCart) //saving/persisting the cart in local storage
+    router.push('/checkout')
+  }
+
   return (
     <>
-      <Navbar cart={cart} addCart={addCart} removeCart={removeCart} clearCart={clearCart} subTotal={subTotal} />
-      <Component cart={cart} addCart={addCart} removeCart={removeCart} clearCart={clearCart} subTotal={subTotal} {...pageProps} />
+      <Navbar buyNow={buyNow} cart={cart} addCart={addCart} removeCart={removeCart} clearCart={clearCart} subTotal={subTotal} />
+      <Component buyNow={buyNow} cart={cart} addCart={addCart} removeCart={removeCart} clearCart={clearCart} subTotal={subTotal} {...pageProps} />
       <Footer />
     </>
   )

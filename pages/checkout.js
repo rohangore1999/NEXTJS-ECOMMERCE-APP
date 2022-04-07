@@ -75,7 +75,7 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
                     {
                         Object.keys(cart).map((item, idx) => (
                             <li key={idx} className='space-x-10 flex'>
-                                <span>{cart[item].name}</span> {/* cart >>>  console.log(cart['wear-the-code'].name) */}
+                                <span>{cart[item].name}({cart[item].size}/{cart[item].variant})</span> {/* cart >>>  console.log(cart['wear-the-code'].name) */}
 
                                 <div className='flex space-x-2'>
                                     <span className=' flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-full p-2 hover:scale-125 transition transform ease-out' onClick={() => removeCart(item, 1, cart[item].price, cart[item].name, cart[item].size, cart[item].variant)}><AiOutlineMinus className='text-xs' /></span>
@@ -93,9 +93,9 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
             {
                 Object.keys(cart).length >= 1 ? (
                     <div className='flex ml-10'>
-                        <Link href={'/order'}>
+                        <Link href={'/order'}><a>
                             <button className="flex mt-2 mr-5 text-black border-2 border-black bg-transparent py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base"><AiOutlineShoppingCart className='mt-1 mr-2 text-xl' />Pay {subTotal}</button>
-                        </Link>
+                        </a></Link>
                     </div>
                 ) : (
                     <div className='text-sm text-gray-500'>Your cart is empty</div>
