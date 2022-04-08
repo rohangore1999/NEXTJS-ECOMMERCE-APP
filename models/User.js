@@ -14,4 +14,4 @@ const UserSchema = new mongoose.Schema({
 mongoose.models = {} //whenever the Product.js imported it will try to create and model and give error "cannot overwrite" so we are creating empty model to avoide that error
 
 // exporting so that we can use
-export default mongoose.model("Order", UserSchema)
+export default mongoose.model("User", UserSchema)
