@@ -2,7 +2,7 @@
 
 import User from "../../models/User"
 import connectDb from "../../middleware/mongoose"
-
+var CryptoJS = require("crypto-js");
 // role of getproduct api is to simply returning the products when they call
 // so for that we need to first fetch the products data from our mongodb database, then return it when api call
 
@@ -10,7 +10,9 @@ const handler = async (req, res) => {
     if (req.method === "POST") {
         // if the methond is post then, do signup
         console.log(req.body)
-        let signup = new User(req.body)
+
+        let { name, email } = req.body
+        let signup = new User({ name, email, password: CryptoJS.AES.encrypt(req.body.password, 'secretkey123').toString() })
         // to save the created product
         await signup.save()
 
