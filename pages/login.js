@@ -9,8 +9,8 @@ function login() {
 
     const router = useRouter()
 
-    const [email, setEmail] = useState()
-    const [password, setPassword] = useState()
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
 
     const handleSubmit = async (e) => {
@@ -19,7 +19,7 @@ function login() {
         const data = { name, email, password };
 
         // making POST request
-        let res = await fetch('http://localhost:3000/api/login', {
+        let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/login`, {
             method: 'POST', // or 'PUT'
             headers: {
                 'Content-Type': 'application/json',

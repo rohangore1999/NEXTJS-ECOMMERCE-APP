@@ -6,8 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function signup() {
     const [name, setName] = useState()
-    const [email, setEmail] = useState()
-    const [password, setPassword] = useState()
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
 
     const handleSubmit = async (e) => {
@@ -16,7 +16,7 @@ function signup() {
         const data = { name, email, password };
 
         // making POST request
-        let res = await fetch('http://localhost:3000/api/signup', {
+        let res = await fetch(`${process.env.HOST}/api/signup`, {
             method: 'POST', // or 'PUT'
             headers: {
                 'Content-Type': 'application/json',

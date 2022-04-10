@@ -25,7 +25,7 @@ function Slug({ buyNow, cart, addCart, removeCart, clearCart, subTotal, product,
 
   const checkPins = async () => {
     // get all the pins from the API pincode.js
-    let p = await fetch('http://localhost:3000/api/pincode')
+    let p = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`)
       .then((res) => res.json()) //get the list of apis from our pincode api
       .then((res1) => {
         // we are checking if the entered pin is present in our list which we got from api
@@ -63,7 +63,7 @@ function Slug({ buyNow, cart, addCart, removeCart, clearCart, subTotal, product,
 
   // to refresh when size/color selected
   const refreshVarient = (newsize, newcolor) => {
-    let url = `http://localhost:3000/product/${varients[newcolor][newsize]['slug']}`
+    let url = `${process.env.HOST}/product/${varients[newcolor][newsize]['slug']}`
     window.location = url //it will visit by reloading to same url
   }
 
