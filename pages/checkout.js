@@ -2,10 +2,66 @@ import React from 'react'
 import Link from 'next/link'
 import { AiOutlineShoppingCart, AiOutlineMinus } from 'react-icons/ai';
 import { GrAdd } from 'react-icons/gr';
+import Head from 'next/head';
+import Link from 'next/link'
+import Script from 'next/script';
 
 function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
+    const initiatePayment = async () => {
+        let oid = Math.floor(Math.random() * Date.now())
+
+        // get transaction token
+        const data = { cart, subTotal, oid, email:"email" }
+
+        let a = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pretransaction`, {
+            method: 'POST', // or 'PUT'
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+
+        let txn_token_res = await a.json()
+        let txn_token = txn_token_res.txnToken
+        console.log(b)
+
+        var config = {
+            "root": "",
+            "flow": "DEFAULT",
+            "data": {
+                "orderId": oid, /* update order id */
+                "token": txn_token, /* update token value */
+                "tokenType": "TXN_TOKEN",
+                "amount": subTotal /* update amount */
+            },
+            "handler": {
+                "notifyMerchant": function (eventName, data) {
+                    console.log("notifyMerchant handler function called");
+                    console.log("eventName => ", eventName);
+                    console.log("data => ", data);
+                }
+            }
+        };
+
+        if (window.Paytm && window.Paytm.CheckoutJS) {
+            // initialze configuration using init method 
+            window.Paytm.CheckoutJS.init(config).then(function onSuccess() {
+                // after successfully updating configuration, invoke JS Checkout
+                window.Paytm.CheckoutJS.invoke(); 
+            }).catch(function onError(error) {
+                console.log("error => ", error);
+            });
+            ;
+        }
+    }
+
     return (
         <div className='container m-auto'>
+            <Head>
+                <Script type="application/javascript" crossorigin="anonymous" 
+                src={`${process.env.NEXT_PUBLIC_HOST}/merchantpgpui/checkoutjs/merchants/${process.env.NEXT_PUBLIC_PAYTM_HOST}.js`}/>
+            </Head>
+
             <h1 className='font-bold text-3xl text-center my-8'>Checkout</h1>
 
             <h2 className='font-bold text-xl px-5 my-2'>1. Delivery Details</h2>
@@ -94,7 +150,7 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
                 Object.keys(cart).length >= 1 ? (
                     <div className='flex ml-10'>
                         <Link href={'/order'}><a>
-                            <button className="flex mt-2 mr-5 text-black border-2 border-black bg-transparent py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base"><AiOutlineShoppingCart className='mt-1 mr-2 text-xl' />Pay {subTotal}</button>
+                            <button onClick={initiatePayment} className="flex mt-2 mr-5 text-black border-2 border-black bg-transparent py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base"><AiOutlineShoppingCart className='mt-1 mr-2 text-xl' />Pay {subTotal}</button>
                         </a></Link>
                     </div>
                 ) : (
