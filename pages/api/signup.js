@@ -12,7 +12,7 @@ const handler = async (req, res) => {
         console.log(req.body)
 
         let { name, email } = req.body
-        let signup = new User({ name, email, password: CryptoJS.AES.encrypt(req.body.password, 'secretkey123').toString() })
+        let signup = new User({ name, email, password: CryptoJS.AES.encrypt(req.body.password, process.env.AES_SECRET).toString() })
         // to save the created product
         await signup.save()
 

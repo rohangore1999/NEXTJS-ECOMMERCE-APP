@@ -4,13 +4,24 @@ import { AiOutlineShoppingCart, AiOutlineMinus } from 'react-icons/ai';
 import { GrAdd } from 'react-icons/gr';
 import Head from 'next/head';
 import Script from 'next/script';
+import { useState } from 'react';
 
 function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
+    const [name, setName] = useState()
+    const [email, setEmail] = useState()
+    const [phone, setPhone] = useState()
+    const [pincode, setPincode] = useState()
+    const [address, setAddress] = useState()
+    const [city, setCity] = useState()
+    const [state, setState] = useState()
+
+
+
     const initiatePayment = async () => {
         let oid = Math.floor(Math.random() * Date.now())
 
         // get transaction token
-        const data = { cart, subTotal, oid, email: "email" }
+        const data = { cart, subTotal, oid, email, name, address, pincode, phone }
 
         let a = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pretransaction`, {
             method: 'POST', // or 'PUT'
@@ -67,22 +78,22 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
                 <div className='px-2 w-1/2'>
                     <div className="mb-4">
                         <label htmlFor="name" className="leading-7 text-sm text-gray-600">Name</label>
-                        <input type="text" id="name" name="name" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                        <input value={name} onChange={(e) => setName(e.target.value)} type="text" id="name" name="name" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
                 </div>
 
                 <div className='px-2 w-1/2'>
                     <div className="mb-4">
                         <label htmlFor="email" className="leading-7 text-sm text-gray-600">Email</label>
-                        <input type="email" id="email" name="email" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" id="email" name="email" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
                 </div>
             </div>
 
             <div className='px-2 w-full px'>
                 <div className="mb-4 px-5">
-                    <label htmlFor="email" className="leading-7 text-sm text-gray-600">Address</label>
-                    <textarea name="address" cols="30" rows="2" className="w-full px-2 bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 leading-8 transition-colors duration-200 ease-in-out"></textarea>
+                    <label htmlFor="address" className="leading-7 text-sm text-gray-600">Address</label>
+                    <textarea value={address} onChange={(e) => setAddress(e.target.value)} name="address" cols="30" rows="2" className="w-full px-2 bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 leading-8 transition-colors duration-200 ease-in-out"></textarea>
                 </div>
             </div>
 
@@ -90,32 +101,35 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
                 <div className='px-2 w-1/2'>
                     <div className="mb-4">
                         <label htmlFor="phone" className="leading-7 text-sm text-gray-600">Phone</label>
-                        <input type="text" id="phone" name="phone" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                    </div>
-                </div>
-
-                <div className='px-2 w-1/2'>
-                    <div className="mb-4">
-                        <label htmlFor="city" className="leading-7 text-sm text-gray-600">City</label>
-                        <input type="text" id="city" name="city" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                    </div>
-                </div>
-            </div>
-
-            <div className='mx-auto flex px-5'>
-                <div className='px-2 w-1/2'>
-                    <div className="mb-4">
-                        <label htmlFor="state" className="leading-7 text-sm text-gray-600">State</label>
-                        <input type="text" id="state" name="state" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                        <input value={phone} onChange={(e) => setPhone(e.target.value)} type="text" id="phone" name="phone" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
                 </div>
 
                 <div className='px-2 w-1/2'>
                     <div className="mb-4">
                         <label htmlFor="pincode" className="leading-7 text-sm text-gray-600">Pincode</label>
-                        <input type="number" id="pincode" name="pincode" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                        <input value={pincode} onChange={(e) => setPincode(e.target.value)} type="number" id="pincode" name="pincode" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
                 </div>
+
+            </div>
+
+            <div className='mx-auto flex px-5'>
+                <div className='px-2 w-1/2'>
+                    <div className="mb-4">
+                        <label htmlFor="state" className="leading-7 text-sm text-gray-600">State</label>
+                        <input value={state} type="text" id="state" name="state" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly={true} />
+                    </div>
+                </div>
+
+                <div className='px-2 w-1/2'>
+                    <div className="mb-4">
+                        <label htmlFor="city" className="leading-7 text-sm text-gray-600">City</label>
+                        <input value={city} type="text" id="city" name="city" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly={true} />
+                    </div>
+                </div>
+
+
             </div>
 
             <h2 className='font-bold text-xl px-5 my-2'>2. Review Cart Items</h2>
@@ -147,7 +161,7 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
                 Object.keys(cart).length >= 1 ? (
                     <div className='flex ml-10'>
                         <Link href={'/order'}><a>
-                            <button onClick={initiatePayment} className="flex mt-2 mr-5 text-black border-2 border-black bg-transparent py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base"><AiOutlineShoppingCart className='mt-1 mr-2 text-xl' />Pay {subTotal}</button>
+                            <button disabled={name && email && phone && address && pincode ? false : true} onClick={initiatePayment} className={`disabled:opacity-40 disabled:cursor-not-allowed flex mt-2 mr-5 text-black border-2 border-black bg-transparent py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base`}><AiOutlineShoppingCart className='mt-1 mr-2 text-xl' />Pay {subTotal}</button>
                         </a></Link>
                     </div>
                 ) : (

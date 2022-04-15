@@ -1,9 +1,21 @@
 const https = require('https');
 const PaytmChecksum = require('paytmchecksum');
 
+import Order from "../../models/Order"
+import connectDb from "../../middleware/mongoose"
 
-export default async function handler(req, res) {
+const handler = async (req, res) => {
     if (req.method == 'POST') {
+        // initiate order corresponding to this order id
+        let order = new Order({
+            email:req.body.email,
+            orderId:req.body.oid,
+            address:req.body.address,
+            amount:req.body.subTotal,
+            products: req.body.cart
+        })
+
+        await order.save()
 
         // insert the entry into orders table with status as pending
         var paytmParams = {};
@@ -77,3 +89,6 @@ export default async function handler(req, res) {
 
     }
 }
+
+
+export default connectDb(handler) // while exporting the handle we are passing it through connectDb so it will make sure that our database is connected or not

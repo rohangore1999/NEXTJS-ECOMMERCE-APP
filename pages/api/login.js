@@ -17,8 +17,8 @@ const handler = async (req, res) => {
         let user = await User.findOne({ "email": req.body.email })
         if (user) {
             console.log("found user >>> ", user)
-            if (req.body.email === user.email && req.body.password === CryptoJS.AES.decrypt(user.password, 'secretkey123').toString(CryptoJS.enc.Utf8)) {
-                var token = jwt.sign({ email: user.email, name: user.name }, 'jwttoken', {expiresIn:'2d'}); //making the jwt token, so that we can store it in local storage. From jwt token we know that user is sign in
+            if (req.body.email === user.email && req.body.password === CryptoJS.AES.decrypt(user.password, process.env.AES_SECRET).toString(CryptoJS.enc.Utf8)) {
+                var token = jwt.sign({ email: user.email, name: user.name }, process.env.JWT_SECRET, {expiresIn:'2d'}); //making the jwt token, so that we can store it in local storage. From jwt token we know that user is sign in
                 // and it will expires in 2day
 
                 // passing the token and the success message
