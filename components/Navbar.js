@@ -14,8 +14,10 @@ function Navbar({ cart, addCart, removeCart, clearCart, subTotal }) {
 
     const toggleCart = () => {
         if (Object.keys(cart).length !== 0) {
-            ref.current.classList.remove("translate-x-full")
-            ref.current.classList.add("translate-x-0")
+            if (ref.current.classList.contains("translate-x-0")) {
+                ref.current.classList.remove("translate-x-full")
+                ref.current.classList.add("translate-x-0")
+            }
         }
 
         // to toggle the sidebar for the cart
