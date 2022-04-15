@@ -17,6 +17,8 @@ const handler = async (req, res) => {
 
         await order.save()
 
+        
+
         // insert the entry into orders table with status as pending
         var paytmParams = {};
 

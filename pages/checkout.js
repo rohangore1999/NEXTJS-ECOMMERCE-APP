@@ -160,9 +160,7 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
             {
                 Object.keys(cart).length >= 1 ? (
                     <div className='flex ml-10'>
-                        <Link href={'/order'}><a>
-                            <button disabled={name && email && phone && address && pincode ? false : true} onClick={initiatePayment} className={`disabled:opacity-40 disabled:cursor-not-allowed flex mt-2 mr-5 text-black border-2 border-black bg-transparent py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base`}><AiOutlineShoppingCart className='mt-1 mr-2 text-xl' />Pay {subTotal}</button>
-                        </a></Link>
+                        <button disabled={name && email && phone && address && pincode ? false : true} onClick={initiatePayment} className={`disabled:opacity-40 disabled:cursor-not-allowed flex mt-2 mr-5 text-black border-2 border-black bg-transparent py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base`}><AiOutlineShoppingCart className='mt-1 mr-2 text-xl' />Pay {subTotal}</button>
                     </div>
                 ) : (
                     <div className='text-sm text-gray-500'>Your cart is empty</div>
