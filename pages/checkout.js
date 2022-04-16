@@ -6,14 +6,43 @@ import Head from 'next/head';
 import Script from 'next/script';
 import { useState } from 'react';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
     const [name, setName] = useState()
     const [email, setEmail] = useState()
     const [phone, setPhone] = useState()
-    const [pincode, setPincode] = useState()
+    const [pincode, setPincode] = useState('')
     const [address, setAddress] = useState()
     const [city, setCity] = useState()
     const [state, setState] = useState()
+
+    const handleChange = async (e) => {
+
+        if (e.target.name == 'pincode') {
+            setPincode(e.target.value)
+
+            if (e.target.value.length == 6) {
+                let pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`)
+                let pinJson = await pins.json()
+
+                if (Object.keys(pinJson).includes(e.target.value)) {
+                    setCity(pinJson[e.target.value][0])
+                    setState(pinJson[e.target.value][1])
+                }
+                else {
+                    setCity('')
+                    setState('')
+                }
+            }
+            else {
+                setCity('')
+                setState('')
+            }
+        }
+    }
 
 
 
@@ -33,38 +62,65 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
 
         let txn_token_res = await a.json()
         console.log("txn_token_res >>> ", txn_token_res)
-        let txn_token = txn_token_res.txnToken
-        console.log(txn_token)
 
-        var config = {
-            "root": "",
-            "flow": "DEFAULT",
-            "data": {
-                "orderId": oid, /* update order id */
-                "token": txn_token, /* update token value */
-                "tokenType": "TXN_TOKEN",
-                "amount": subTotal /* update amount */
-            },
-            "handler": {
-                "notifyMerchant": function (eventName, data) {
-                    console.log("notifyMerchant handler function called");
-                    console.log("eventName => ", eventName);
-                    console.log("data => ", data);
+        if (txn_token_res.success) {
+
+            let txn_token = txn_token_res.txnToken
+            console.log(txn_token)
+
+            var config = {
+                "root": "",
+                "flow": "DEFAULT",
+                "data": {
+                    "orderId": oid, /* update order id */
+                    "token": txn_token, /* update token value */
+                    "tokenType": "TXN_TOKEN",
+                    "amount": subTotal /* update amount */
+                },
+                "handler": {
+                    "notifyMerchant": function (eventName, data) {
+                        console.log("notifyMerchant handler function called");
+                        console.log("eventName => ", eventName);
+                        console.log("data => ", data);
+                    }
                 }
-            }
-        };
-
-        // initialze configuration using init method 
-        window.Paytm.CheckoutJS.init(config).then(function onSuccess() {
-            // after successfully updating configuration, invoke JS Checkout
-            window.Paytm.CheckoutJS.invoke();
-        }).catch(function onError(error) {
-            console.log("error => ", error);
-        });
+            };
+            // initialze configuration using init method 
+            window.Paytm.CheckoutJS.init(config).then(function onSuccess() {
+                // after successfully updating configuration, invoke JS Checkout
+                window.Paytm.CheckoutJS.invoke();
+            }).catch(function onError(error) {
+                console.log("error => ", error);
+            });
+        }
+        else {
+            console.log(txn_token_res.error)
+            toast.error(txn_token_res.error, {
+                position: "top-left",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+        }
     }
 
     return (
         <div className='container m-auto'>
+            <ToastContainer
+                position="top-left"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
+
             <Head><meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0" />
             </Head>
             <Script type="application/javascript" crossorigin="anonymous"
@@ -108,7 +164,7 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
                 <div className='px-2 w-1/2'>
                     <div className="mb-4">
                         <label htmlFor="pincode" className="leading-7 text-sm text-gray-600">Pincode</label>
-                        <input value={pincode} onChange={(e) => setPincode(e.target.value)} type="number" id="pincode" name="pincode" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                        <input value={pincode} onChange={handleChange} type="number" id="pincode" name="pincode" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
                 </div>
 
@@ -118,14 +174,14 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
                 <div className='px-2 w-1/2'>
                     <div className="mb-4">
                         <label htmlFor="state" className="leading-7 text-sm text-gray-600">State</label>
-                        <input value={state} type="text" id="state" name="state" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly={true} />
+                        <input onChange={handleChange} value={state} type="text" id="state" name="state" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
                 </div>
 
                 <div className='px-2 w-1/2'>
                     <div className="mb-4">
                         <label htmlFor="city" className="leading-7 text-sm text-gray-600">City</label>
-                        <input value={city} type="text" id="city" name="city" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly={true} />
+                        <input onChange={handleChange} value={city} type="text" id="city" name="city" className="w-full bg-white rounded border border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                     </div>
                 </div>
 

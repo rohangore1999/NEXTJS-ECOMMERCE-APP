@@ -1,9 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import Order from "../../models/Order"
 import connectDb from "../../middleware/mongoose"
+import order from "../order"
 
 
 const handler = async (req, res) => {
+    let order
     // validate paytm checksum
 
     // Update into orders table after checking the transaction status
@@ -11,17 +13,17 @@ const handler = async (req, res) => {
     // if the status from the paytm gateway is success then only update to success
     if (req.body.STATUS == 'TXN_SUCCESS') {
         // findOneAndUpdate(filter, update)
-        let order = await Order.findOneAndUpdate({ orderId: req.body.ORDERID }, { status: 'Paid', paymentInfo: JSON.stringify(req.body) }) //we are finding the order and updating the status with the help of id
+        order = await Order.findOneAndUpdate({ orderId: req.body.ORDERID }, { status: 'Paid', paymentInfo: JSON.stringify(req.body) }) //we are finding the order and updating the status with the help of id
     }
     // else make it pending only
     else if (req.body.STATUS == 'PENDING') {
-        let order = await Order.findOneAndUpdate({ orderId: req.body.ORDERID }, { status: 'Pending', paymentInfo: JSON.stringify(req.body) }) //we are finding the order and updating the status with the help of id
+        order = await Order.findOneAndUpdate({ orderId: req.body.ORDERID }, { status: 'Pending', paymentInfo: JSON.stringify(req.body) }) //we are finding the order and updating the status with the help of id
 
     }
     
     // initiate shipping
     // redirect user to order confirmation page
-    res.redirect('/orders', 200) //redirect on 200 status to order page
+    res.redirect('/order?id='+order._id, 200) //redirect on 200 status to order page
 
     res.status(200).json({ body: req.body })
 }

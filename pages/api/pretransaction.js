@@ -2,22 +2,48 @@ const https = require('https');
 const PaytmChecksum = require('paytmchecksum');
 
 import Order from "../../models/Order"
+import Product from "../../models/Product"
 import connectDb from "../../middleware/mongoose"
 
 const handler = async (req, res) => {
     if (req.method == 'POST') {
+
+        let cart = req.body.cart
+        let product, sumTotal = 0
+        // Check if the cart is tampered 
+        for (let item in cart) {
+
+            // getting the product of corresponding slug from the database 
+            product = await Product.findOne({ slug: item })
+
+            // calculating the subTotal from local storage
+            sumTotal += cart[item].price * cart[item].qty
+
+            // checking the product (from db) price with local storage cart price; if not same then
+            if (product.price != cart[item].price) {
+                res.status(200).json({ success: false, "error": "The price of the some items have changed. Please try again" })
+                return
+            }
+        }
+
+        // checking the subTotal with database subtotal
+        if (sumTotal !== req.body.subTotal) {
+            res.status(200).json({ success: false, "error": "The price of the some items have changed. Please try again" })
+            return
+
+        }
+
+
         // initiate order corresponding to this order id
         let order = new Order({
-            email:req.body.email,
-            orderId:req.body.oid,
-            address:req.body.address,
-            amount:req.body.subTotal,
+            email: req.body.email,
+            orderId: req.body.oid,
+            address: req.body.address,
+            amount: req.body.subTotal,
             products: req.body.cart
         })
 
         await order.save()
-
-        
 
         // insert the entry into orders table with status as pending
         var paytmParams = {};
@@ -76,7 +102,13 @@ const handler = async (req, res) => {
 
                     post_res.on('end', function () {
                         console.log('Response: ', response);
-                        resolve(JSON.parse(response).body)
+
+                        // resolve(JSON.parse(response).body)
+                        // as we cant directly parse success as a string so we are seperately giving success
+                        let ress = JSON.parse(response).body
+                        //  if (txn_token_res.success) {} >> as in checkout we are check like this
+                        ress.success = true
+                        resolve(ress)
                     });
                 });
 

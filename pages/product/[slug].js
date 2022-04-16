@@ -29,7 +29,7 @@ function Slug({ buyNow, cart, addCart, removeCart, clearCart, subTotal, product,
       .then((res) => res.json()) //get the list of apis from our pincode api
       .then((res1) => {
         // we are checking if the entered pin is present in our list which we got from api
-        if (res1.includes(parseInt(pin))) {
+        if (Object.keys(res1).includes(pin)) {
           setService(true)
           toast.success('Your pincode is serviceable!', {
             position: "bottom-center",
