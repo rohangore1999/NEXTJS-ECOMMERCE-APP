@@ -11,16 +11,17 @@ const handler = async (req, res) => {
     // if the status from the paytm gateway is success then only update to success
     if (req.body.STATUS == 'TXN_SUCCESS') {
         // findOneAndUpdate(filter, update)
-        await Order.findOneAndUpdate({ orderId: req.body.ORDERID }, { status: 'Paid', paymentInfo: JSON.stringify(req.body) }) //we are finding the order and updating the status with the help of id
+        let order = await Order.findOneAndUpdate({ orderId: req.body.ORDERID }, { status: 'Paid', paymentInfo: JSON.stringify(req.body) }) //we are finding the order and updating the status with the help of id
     }
     // else make it pending only
     else if (req.body.STATUS == 'PENDING') {
-        await Order.findOneAndUpdate({ orderId: req.body.ORDERID }, { status: 'Pending', paymentInfo: JSON.stringify(req.body) }) //we are finding the order and updating the status with the help of id
+        let order = await Order.findOneAndUpdate({ orderId: req.body.ORDERID }, { status: 'Pending', paymentInfo: JSON.stringify(req.body) }) //we are finding the order and updating the status with the help of id
 
     }
+    
     // initiate shipping
     // redirect user to order confirmation page
-    res.redirect('/order', 200) //redirect on 200 status to order page
+    res.redirect('/orders', 200) //redirect on 200 status to order page
 
     res.status(200).json({ body: req.body })
 }

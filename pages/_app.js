@@ -97,7 +97,8 @@ function MyApp({ Component, pageProps }) {
   const buyNow = (itemCode, qty, price, name, size, variant) => {
     saveCart({}) //empty the local storage
 
-    let newCart = { itemCode: { qty: 1, price, name, size, variant } } // making copy of the cart
+    let newCart = {}
+    newCart[itemCode] =  { qty: 1, price, name, size, variant } // making copy of the cart
 
     setCart(newCart) //updating the original cart
     saveCart(newCart) //saving/persisting the cart in local storage

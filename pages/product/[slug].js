@@ -63,7 +63,7 @@ function Slug({ buyNow, cart, addCart, removeCart, clearCart, subTotal, product,
 
   // to refresh when size/color selected
   const refreshVarient = (newsize, newcolor) => {
-    let url = `${process.env.HOST}/product/${varients[newcolor][newsize]['slug']}`
+    let url = `${process.env.NEXT_PUBLIC_HOST}/product/${varients[newcolor][newsize]['slug']}`
     window.location = url //it will visit by reloading to same url
   }
 
@@ -141,12 +141,15 @@ function Slug({ buyNow, cart, addCart, removeCart, clearCart, subTotal, product,
                   {Object.keys(varients).includes('white') && Object.keys(varients['white']).includes(size) && <button onClick={() => refreshVarient(size, 'white')} className={`border-2  
                   rounded-full w-6 h-6 focus:outline-none ${color === 'white' ? 'border-black' : 'border-gray-300'} `}></button>}
 
-                  {Object.keys(varients).includes('red') && Object.keys(varients['red']).includes(size) && <button onClick={() => refreshVarient(size, 'red')} className={`border-2  ml-1
+                  {Object.keys(varients).includes('red') && Object.keys(varients['red']).includes(size) && <button onClick={() => refreshVarient(size, 'red')} 
+                  className={`border-2  ml-1
                    bg-red-700 rounded-full w-6 h-6 focus:outline-none ${color === 'red' ? 'border-black' : 'border-gray-300'} `}></button>}
 
-                  {Object.keys(varients).includes('blue') && Object.keys(varients['blue']).includes(size) && <button onClick={() => refreshVarient(size, 'blue')} className={`border-2  ml-1 bg-blue-700 rounded-full w-6 h-6 focus:outline-none ${color === 'blue' ? 'border-black' : 'border-gray-300'} `}></button>}
+                  {Object.keys(varients).includes('blue') && Object.keys(varients['blue']).includes(size) && <button onClick={() => refreshVarient(size, 'blue')} className={`border-2  ml-1 bg-blue-700 rounded-full w-6 h-6 focus:outline-none ${color === 'blue' ? 'border-black' : 'border-gray-300'} `}>
+                    </button>}
 
-                  {Object.keys(varients).includes('green') && Object.keys(varients['green']).includes(size) && <button onClick={() => refreshVarient(size, 'green')} className={`border-2  ml-1 bg-green-700 rounded-full w-6 h-6 focus:outline-none ${color === 'green' ? 'border-black' : 'border-gray-300'} `}></button>}
+                  {Object.keys(varients).includes('green') && Object.keys(varients['green']).includes(size) && <button onClick={() => refreshVarient(size, 'green')} className={`border-2  ml-1 bg-green-700 rounded-full w-6 h-6 focus:outline-none ${color === 'green' ? 'border-black' : 'border-gray-300'} `}>
+                    </button>}
 
                 </div>
 
@@ -177,7 +180,7 @@ function Slug({ buyNow, cart, addCart, removeCart, clearCart, subTotal, product,
                 </div>
               </div>
               <div className="flex">
-                <span className="title-font font-medium text-2xl text-gray-900">{product.price}</span>
+                <span className="title-font font-medium text-2xl text-gray-900">Rs. {product.price}</span>
                 <button className="flex ml-auto text-white bg-gray-500 border-0 py-2 px-6 focus:outline-none hover:bg-gray-600 rounded"
                   onClick={() => addCart(slug, 1, product.price, product.title, size, color)}> Add </button>
                 <button onClick={() => buyNow(slug, 1, product.price, product.title, size, color)} className="flex mx-2 text-white bg-gray-500 border-0 py-2 px-6 focus:outline-none hover:bg-gray-600 rounded">

@@ -1,22 +1,43 @@
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React from 'react'
-import { useEffect } from 'react'
-import Order from '../models/Order'
-import mongoose from "mongoose";
+import { useEffect, useState } from 'react'
 
 function orders() {
     const router = useRouter()
+    const [orders, setOrders] = useState([])
 
     useEffect(() => {
+        const fetchOrders = async () => {
+            let a = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/myorder`, {
+                method: 'POST', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                // in body we are sending stored jwt token
+                body: JSON.stringify({ token: localStorage.getItem('token') }),
+            })
+
+            let res = await a.json()
+            console.log(res)
+            setOrders(res.orders)
+        }
+
+
         // if we didnt get token in our local storage, means user is not logged in so redirect to home page
         if (!localStorage.getItem('token')) {
             router.push('/')
         }
+        else {
+            // if token available then only call our async function
+            fetchOrders()
+        }
     }, [])
 
+    console.log(orders)
 
     return (
-        <div>
+        <div className='min-h-screen'>
             <div className='container mx-auto'>
                 <div className="flex flex-col my-5 mx-10">
                     <h1 className='font-semibold text-xl text-center my-5'>My Orders</h1>
@@ -27,56 +48,37 @@ function orders() {
                                     <thead className="border-b">
                                         <tr>
                                             <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                                                #
+                                                #Order ID
                                             </th>
                                             <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                                                First
+                                                Email
                                             </th>
                                             <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                                                Last
+                                                Amount
                                             </th>
                                             <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                                                Handle
+                                                Details
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr className="border-b">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
-                                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                Mark
-                                            </td>
-                                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                Otto
-                                            </td>
-                                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                @mdo
-                                            </td>
-                                        </tr>
-                                        <tr className="bg-white border-b">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">2</td>
-                                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                Jacob
-                                            </td>
-                                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                Thornton
-                                            </td>
-                                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                @fat
-                                            </td>
-                                        </tr>
-                                        <tr className="bg-white border-b">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">3</td>
-                                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                Larry
-                                            </td>
-                                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                Wild
-                                            </td>
-                                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                @twitter
-                                            </td>
-                                        </tr>
+
+                                        {orders.map((order) => (
+                                            <tr key={order._id} className="border-b">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order._id}</td>
+                                                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                    {order.email}
+                                                </td>
+                                                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                    {order.amount}
+                                                </td>
+                                                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                    <Link href={`/order?id=` + order._id}><a>Details</a></Link>
+                                                </td>
+                                            </tr>
+                                        ))}
+
+
                                     </tbody>
                                 </table>
                             </div>
@@ -90,24 +92,3 @@ function orders() {
 }
 
 export default orders
-
-export async function getServerSideProps(context) {
-
-    if (!mongoose.connections[0].readyState) {
-        // if no existing connection
-        // to make new connection
-        await mongoose.connect(process.env.MONGO_URI)
-    }
-
-    // getting all the products[product using Find() of mongodb
-    let orders = await Order.find({}) // give one product as per the slug which filtered >> findOne
-
-
-
-    return {
-        // as ID field giving object error, so we are stringifying the products and then converting to JSON object
-        props: {
-            orders: orders
-        }, // will be passed to the page component as props
-    }
-}
