@@ -19,6 +19,12 @@ const handler = async (req, res) => {
             // calculating the subTotal from local storage
             sumTotal += cart[item].price * cart[item].qty
 
+            // To check if the product is OUT OF STOCK!!!
+            if (product.availableQty < cart[item].qty) {
+                res.status(200).json({ success: false, "error": "Some Items are OUT OF STOCK. Please try again" })
+                
+            }
+
             // checking the product (from db) price with local storage cart price; if not same then
             if (product.price != cart[item].price) {
                 res.status(200).json({ success: false, "error": "The price of the some items have changed. Please try again" })

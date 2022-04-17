@@ -1,12 +1,22 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Order from '../models/Order'
 import mongoose from 'mongoose'
 
-function order({ order }) {
+function order({ order, clearCart }) {
     console.log(order)
     let products = order.products
     console.log(order.products)
+
+    const router = useRouter()
+
+    useEffect(() => {
+        if (router.query.clearCart == 1) {
+            clearCart()
+        }
+    }, [])
+
+
 
     return (
         <section className="text-gray-600 body-font overflow-hidden">
@@ -25,7 +35,7 @@ function order({ order }) {
 
                         {Object.keys(products).map((item) => (
                             <div key={item} className="flex items-center justify-center border-gray-200 py-2 px-10 truncate">
-                                <span className="text-gray-500 flex items-center justify-center">{products[item].name.slice(0,10)}...({products[item].size})/({products[item].variant})</span>
+                                <span className="text-gray-500 flex items-center justify-center">{products[item].name.slice(0, 10)}...({products[item].size})/({products[item].variant})</span>
                                 <span className="ml-auto text-gray-500 flex items-center justify-center">{products[item].qty}</span>
                                 <span className="ml-auto text-gray-900 flex items-center justify-center">{products[item].price}</span>
                             </div>

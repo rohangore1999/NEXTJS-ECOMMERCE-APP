@@ -95,6 +95,7 @@ function checkout({ cart, clearCart, addCart, removeCart, subTotal }) {
         }
         else {
             console.log(txn_token_res.error)
+            clearCart()
             toast.error(txn_token_res.error, {
                 position: "top-left",
                 autoClose: 5000,
